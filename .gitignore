@@ -1,0 +1,3 @@
+.nextflow*
+env/*.sif
+misc/*flowchart.svg.*
