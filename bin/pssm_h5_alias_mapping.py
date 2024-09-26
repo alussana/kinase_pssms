@@ -94,6 +94,8 @@ def main():
     
     with h5py.File(pssms_h5_file, "r+") as hdf_file:
         for key in hdf_file.keys():
+            key_parts = key.split('_')
+            key = key_parts[0]
             key_alias_df = alias_map_df.loc[alias_map_df["alias"]==key]
             string_id_array = key_alias_df["#string_protein_id"].unique()
             for string_id_str in string_id_array:
@@ -101,6 +103,8 @@ def main():
                     map_df = alias_map_df.loc[alias_map_df["#string_protein_id"]==string_id_str]
                     map_df.loc[map_df["source"]=="Ensembl_HGNC_symbol",]
                     new_key = map_df.loc[map_df["source"]=="Ensembl_HGNC_symbol","alias"].values[0]
+                    if len(key_parts) > 1:
+                        new_key = f"{new_key}_TYR"
                     if new_key not in hdf_file:
                         hdf_file.copy(key, new_key)
                         del hdf_file[key]
