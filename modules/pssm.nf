@@ -117,8 +117,9 @@ Translate kinase aliases with Ensembl HGNC gene symbol
 */
 process s_t_pssm_h5_alias_mapping {
 
-    publishDir "${out_dir}", pattern: "pssm/*.h5"
-    publishDir "${out_dir}", pattern: "pssm/logos/*.pdf"
+    publishDir "${out_dir}", pattern: "pssm/*.h5", mode: 'copy'
+    publishDir "${out_dir}", pattern: "pssm/S_T_kinase_id_map.tsv", mode: 'copy'
+    publishDir "${out_dir}", pattern: "pssm/logos/*.pdf", mode: 'copy'
 
     input:
         path 'input/S_T_PSSMs.h5'
@@ -126,6 +127,7 @@ process s_t_pssm_h5_alias_mapping {
 
     output:
         path 'pssm/S_T_PSSMs.h5', emit: pssm_dict_h5
+        path 'pssm/S_T_kinase_id_map.tsv'
         path 'pssm/logos/*pdf'
 
     script:
@@ -135,8 +137,8 @@ process s_t_pssm_h5_alias_mapping {
     cp \$(readlink input/S_T_PSSMs.h5) pssm/S_T_PSSMs.h5
 
     pssm_h5_alias_mapping.py \
-         pssm/S_T_PSSMs.h5 \
-        > kinases_w_exceptions.txt
+        pssm/S_T_PSSMs.h5 \
+        > pssm/S_T_kinase_id_map.tsv
     """
 
 }
@@ -147,8 +149,9 @@ Translate kinase aliases with Ensembl HGNC gene symbol
 */
 process y_pssm_h5_alias_mapping {
 
-    publishDir "${out_dir}", pattern: "pssm/*.h5"
-    publishDir "${out_dir}", pattern: "pssm/logos/*.pdf"
+    publishDir "${out_dir}", pattern: "pssm/*.h5", mode: 'copy'
+    publishDir "${out_dir}", pattern: "pssm/Y_kinase_id_map.tsv", mode: 'copy'
+    publishDir "${out_dir}", pattern: "pssm/logos/*.pdf", mode: 'copy'
 
     input:
         path 'input/Y_PSSMs.h5'
@@ -156,6 +159,7 @@ process y_pssm_h5_alias_mapping {
 
     output:
         path 'pssm/Y_PSSMs.h5', emit: pssm_dict_h5
+        path 'pssm/Y_kinase_id_map.tsv'
         path 'pssm/logos/*pdf'
 
     script:
@@ -165,8 +169,8 @@ process y_pssm_h5_alias_mapping {
     cp \$(readlink input/Y_PSSMs.h5) pssm/Y_PSSMs.h5
 
     pssm_h5_alias_mapping.py \
-         pssm/Y_PSSMs.h5 \
-        > kinases_w_exceptions.txt
+        pssm/Y_PSSMs.h5 \
+        > pssm/Y_kinase_id_map.tsv
     """
 
 }
