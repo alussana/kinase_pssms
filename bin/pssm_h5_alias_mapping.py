@@ -69,12 +69,12 @@ def find_translation(
     # Tyr:
     # EPHA3   EPHA3
     # ETK     EPHA3
-    if key == "PDHK1":
-        return key
-    elif key == "HGK":
-        return key
+    if key == "NIK":
+        return "MAP3K14"
+    elif key == "PDK1":
+        return "PDPK1"
     elif key == "ETK":
-        return key
+        return "BMX"
     key_parts = key.split("_")
     key = key_parts[0]
     if (

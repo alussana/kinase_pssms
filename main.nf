@@ -146,7 +146,7 @@ workflow {
     // get alias table from STRING
     string_id_dict = GET_STRING_ID_DICT()
 
-    // get serine/thronine PSSMs
+    // get serine/threonine PSSMs
     ser_thr_kinases_pssm_dict_h5 = SER_THR_KINASES_PSSM( string_id_dict )
 
     // get tyrosine PSSMs
