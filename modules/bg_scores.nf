@@ -42,7 +42,7 @@ process s_t_pssm_background_scores {
         input/pssm_dict.h5 \
         ${params.n_cores} \
         pssm_bg_scores/S_T_PSSMs_score_quantiles.h5 \
-        | gzip > pssm_bg_scores/S_T_PSSMs_score_quantiles.tsv.gz
+        | gzip > pssm_bg_scores/S_T_PSSM_score_quantiles.tsv.gz
     """
 
 }
@@ -87,7 +87,7 @@ process y_pssm_background_scores {
         input/pssm_dict.h5 \
         ${params.n_cores} \
         pssm_bg_scores/Y_PSSMs_score_quantiles.h5 \
-        | gzip > pssm_bg_scores/Y_PSSMs_score_quantiles.tsv.gz
+        | gzip > pssm_bg_scores/Y_PSSM_score_quantiles.tsv.gz
     """
 
 }
