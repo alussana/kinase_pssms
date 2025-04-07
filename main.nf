@@ -20,6 +20,7 @@ include { y_pssm_background_scores } from './modules/bg_scores'
 
 include { get_human_kinases } from './modules/kinases'
 include { build_kinase_metadata } from './modules/kinases'
+include { link_kinase_metadata_to_pssms } from './modules/kinases'
 
 include { publish } from './modules/utils'
 include { split } from './modules/utils'
@@ -139,8 +140,10 @@ workflow Y_PSSM_BACKGROUND_SCORES {
 workflow KINASES {
 
     take:
-        uniprot_id_dict
+        gene_synomym2gene_name_dict
         uniprot2gene_name_and_synonym_dict
+        ser_thr_kinases_pssm_dict_h5
+        tyr_kinases_pssm_dict_h5
 
     main:
         kinase_info_tsv_gz = get_human_kinases()
@@ -148,6 +151,13 @@ workflow KINASES {
         kinase_metadata = translate_ac_to_gene_name( kinase_metadata_untr,
                                                      uniprot2gene_name_and_synonym_dict )
         publish( kinase_metadata, "kinase_metadata/kinase_metadata.tsv" )
+        kinase_metadata_h5 = link_kinase_metadata_to_pssms( kinase_metadata,
+                                                            gene_synomym2gene_name_dict,
+                                                            ser_thr_kinases_pssm_dict_h5,
+                                                            tyr_kinases_pssm_dict_h5 )
+
+    emit:
+        kinase_metadata_h5
 
 }
 
@@ -193,8 +203,10 @@ workflow {
 
     
     // get human kinase domains, A-loops sequences
-    kinase_metadata_h5 = KINASES( uniprot.id_dict,
-                                  uniprot.uniprot2gene_name_and_synonym_dict )
+    kinase_metadata_h5 = KINASES( uniprot.gene_synomym2gene_name_dict,
+                                  uniprot.uniprot2gene_name_and_synonym_dict,
+                                  ser_thr_kinases_pssm_dict_h5,
+                                  tyr_kinases_pssm_dict_h5 )
 
 
     PUBLISH_CONFIG()
