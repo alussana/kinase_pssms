@@ -7,6 +7,7 @@ include { dl_ref_proteome_ac_list } from './modules/uniprot'
 include { IDa2uniprot_ref2IDb } from './modules/uniprot'
 include { uniprot2gene_name_and_synonym } from './modules/uniprot'
 include { translate_ac_to_gene_name } from './modules/uniprot'
+include { translate_ac_to_gene_name as translate_ac_to_gene_name_v } from './modules/uniprot'
 
 include { get_ser_thr_kinome_2023_suppl_table_2 } from './modules/pssm'
 include { get_ser_thr_kinase_pssm } from './modules/pssm'
@@ -19,10 +20,19 @@ include { s_t_pssm_background_scores } from './modules/bg_scores'
 include { y_pssm_background_scores } from './modules/bg_scores'
 
 include { get_human_kinases } from './modules/kinases'
+include { get_kinase_domain_hmm } from './modules/kinases'
+include { extract_kinase_domain_matches } from './modules/kinases'
+include { extract_aloops } from './modules/kinases'
+include { remove_ambiguous_aloops } from './modules/kinases'
 include { build_kinase_metadata } from './modules/kinases'
+include { build_hmm_kinase_metadata } from './modules/kinases'
+include { make_kinase_sequences_fasta } from './modules/kinases'
+include { run_hmmsearch } from './modules/kinases'
 include { link_kinase_metadata_to_pssms } from './modules/kinases'
+include { link_hmm_kinase_metadata_to_pssms } from './modules/kinases'
 
 include { publish } from './modules/utils'
+include { publish as publish_v } from './modules/utils'
 include { split } from './modules/utils'
 include { concatenate } from './modules/utils'
 
@@ -147,7 +157,19 @@ workflow KINASES {
 
     main:
         kinase_info_tsv_gz = get_human_kinases()
+        kinase_domain_hmm = get_kinase_domain_hmm()
         kinase_metadata_untr = build_kinase_metadata( kinase_info_tsv_gz )
+
+
+        kinases_fa = make_kinase_sequences_fasta( kinase_metadata_untr )
+        kinase_domains_hmmsearch = run_hmmsearch( kinase_domain_hmm,
+                                                  kinases_fa )
+        hmm_kinase_domains_matches_fa = extract_kinase_domain_matches( kinase_domains_hmmsearch,
+                                                                       kinases_fa )
+        hmm_kinase_domains_matches_aloops_fa = extract_aloops( hmm_kinase_domains_matches_fa )
+        hmm_kinase_domains_aloops = remove_ambiguous_aloops( hmm_kinase_domains_matches_aloops_fa )
+
+
         kinase_metadata = translate_ac_to_gene_name( kinase_metadata_untr,
                                                      uniprot2gene_name_and_synonym_dict )
         publish( kinase_metadata, "kinase_metadata/kinase_metadata.tsv" )
@@ -155,6 +177,17 @@ workflow KINASES {
                                                             gene_synomym2gene_name_dict,
                                                             ser_thr_kinases_pssm_dict_h5,
                                                             tyr_kinases_pssm_dict_h5 )
+
+
+        hmm_kinase_metadata_untr = build_hmm_kinase_metadata( kinase_metadata_untr,
+                                                              hmm_kinase_domains_aloops )
+        hmm_kinase_metadata = translate_ac_to_gene_name_v( hmm_kinase_metadata_untr, 
+                                                           uniprot2gene_name_and_synonym_dict )
+        publish_v( hmm_kinase_metadata, "kinase_metadata/hmm_kinase_metadata.tsv" )                                                
+        hmm_kinase_metadata_h5 = link_hmm_kinase_metadata_to_pssms( hmm_kinase_metadata,
+                                                                    gene_synomym2gene_name_dict,
+                                                                    ser_thr_kinases_pssm_dict_h5,
+                                                                    tyr_kinases_pssm_dict_h5 )
 
     emit:
         kinase_metadata_h5
