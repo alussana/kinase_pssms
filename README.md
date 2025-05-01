@@ -5,6 +5,7 @@ Generate data required by the [PhosX](https://github.com/alussana/phosx) package
 * Serine/Threonine PSSM quantile scores: `${out_dir}/pssm_bg_scores/S_T_PSSM_score_quantiles.h5`
 * Tyrosine kinase PSSMs: `${out_dir}/datasets/PSSMs/Y_PSSMs.h5`
 * Tyrosine PSSM quantile scores: `${out_dir}/pssm_bg_scores/Y_PSSM_score_quantiles.h5`
+* Kinase metadata: `${out_dir}/kinase_metadata/kinase_metadata.h5`
 
 ## Build the container image
 

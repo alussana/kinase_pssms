@@ -317,3 +317,38 @@ process link_hmm_kinase_metadata_to_pssms {
     """
 
 }
+
+
+/*
+Build kinase metadata h5 adding the annotations to an existing metadata h5 file
+
+ID-map the kinase annotations to the PSSMs
+*/
+process link_kinase_annotations_to_pssms {
+
+    publishDir "${out_dir}", pattern: "kinase_metadata/*.h5", mode: 'copy'
+
+    input:
+        path "input/kinase_annotations.tsv"
+        path "input/gene_synomym2gene_name_dict.tsv"
+        path "input/S_T_PSSMs.h5"
+        path "input/Y_PSSMs.h5"
+        path "input/kinase_metadata.h5"
+
+    output:
+        path "kinase_metadata/kinase_metadata_annotated.h5"
+
+    script:
+    """
+    mkdir -p kinase_metadata
+    
+    link_kinase_annotations_to_pssms.py \
+        input/gene_synomym2gene_name_dict.tsv \
+        input/kinase_annotations.tsv \
+        input/S_T_PSSMs.h5 \
+        input/Y_PSSMs.h5 \
+        input/kinase_metadata.h5 \
+        kinase_metadata/kinase_metadata_annotated.h5
+    """
+
+}

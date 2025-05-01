@@ -172,3 +172,41 @@ process translate_ac_to_gene_name {
     """
 
 }
+
+
+/*
+translate all the words in the second field of input/file.tsv 
+specified in the first tab-separated column of input/dict.tsv
+with the corresponding word found in the third column
+
+the second column of input/dict.tsv specifies whether the translation is to a
+"Gene_Name" or a "Gene_Synonym"
+
+UniProt AC ids are preferentially translated to Gene_Name; if a gene name is
+not found in the dictionary, then we look for a Gene_Synonym 
+
+keep untranslated rows
+*/
+process translate_ac_to_gene_name_2 {
+
+    input:
+        path 'input/file.tsv'
+        path 'input/dict.tsv'
+
+    output:
+        path 'translated_file.tsv'
+
+    script:
+    """
+    translator_ac_2_gene_name_or_synonym.py \
+        input/dict.tsv \
+        input/file.tsv \
+        1 \
+        3 \
+        2 \
+        1 \
+        2 \
+        > translated_file.tsv
+    """
+
+}

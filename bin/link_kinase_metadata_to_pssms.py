@@ -40,7 +40,8 @@ def map_kinase_metadata_to_pssms(pssm_h5, meta_df, dict_df):
         if kinase_name in list(meta_df["Entry"]):
             meta_kinase_name = kinase_name
         else:
-            tr_list = list(dict_df.loc[dict_df["Gene synonym"]==kinase_name, "Gene name"].values)
+            tr_list = list(dict_df.loc[dict_df["Gene name"]==kinase_name, "Gene synonym"].values)
+            tr_list = tr_list + list(dict_df.loc[dict_df["Gene synonym"]==kinase_name, "Gene name"].values)
             for tr_str in tr_list:
                 if tr_str in kinase_names:
                     meta_kinase_name = tr_str
@@ -66,6 +67,7 @@ def map_kinase_metadata_to_pssms(pssm_h5, meta_df, dict_df):
             else:
                 new_dict["aloop_seq"][kinase_name] = np.nan
     return new_dict
+
 
 def main():
     dict_tsv = sys.argv[1]

@@ -8,6 +8,7 @@ include { IDa2uniprot_ref2IDb } from './modules/uniprot'
 include { uniprot2gene_name_and_synonym } from './modules/uniprot'
 include { translate_ac_to_gene_name } from './modules/uniprot'
 include { translate_ac_to_gene_name as translate_ac_to_gene_name_v } from './modules/uniprot'
+include { translate_ac_to_gene_name_2 } from './modules/uniprot'
 
 include { get_ser_thr_kinome_2023_suppl_table_2 } from './modules/pssm'
 include { get_ser_thr_kinase_pssm } from './modules/pssm'
@@ -30,9 +31,9 @@ include { make_kinase_sequences_fasta } from './modules/kinases'
 include { run_hmmsearch } from './modules/kinases'
 include { link_kinase_metadata_to_pssms } from './modules/kinases'
 include { link_hmm_kinase_metadata_to_pssms } from './modules/kinases'
+include { link_kinase_annotations_to_pssms } from './modules/kinases'
 
-include { publish } from './modules/utils'
-include { publish as publish_v } from './modules/utils'
+include { publish; publish as publish_v; publish as publish_vv } from './modules/utils'
 include { split } from './modules/utils'
 include { concatenate } from './modules/utils'
 
@@ -178,12 +179,22 @@ workflow KINASES {
                                                             ser_thr_kinases_pssm_dict_h5,
                                                             tyr_kinases_pssm_dict_h5 )
 
+        
+        kinase_annotations = translate_ac_to_gene_name_2( kinase_annotation_tsv,
+                                                          uniprot2gene_name_and_synonym_dict )
+        publish_v( kinase_annotations, "kinase_metadata/kinase_annotations.tsv" )
+        link_kinase_annotations_to_pssms( kinase_annotations,
+                                          gene_synomym2gene_name_dict,
+                                          ser_thr_kinases_pssm_dict_h5,
+                                          tyr_kinases_pssm_dict_h5,
+                                          kinase_metadata_h5 )
+
 
         hmm_kinase_metadata_untr = build_hmm_kinase_metadata( kinase_metadata_untr,
                                                               hmm_kinase_domains_aloops )
         hmm_kinase_metadata = translate_ac_to_gene_name_v( hmm_kinase_metadata_untr, 
                                                            uniprot2gene_name_and_synonym_dict )
-        publish_v( hmm_kinase_metadata, "kinase_metadata/hmm_kinase_metadata.tsv" )                                                
+        publish_vv( hmm_kinase_metadata, "kinase_metadata/hmm_kinase_metadata.tsv" )                                                
         hmm_kinase_metadata_h5 = link_hmm_kinase_metadata_to_pssms( hmm_kinase_metadata,
                                                                     gene_synomym2gene_name_dict,
                                                                     ser_thr_kinases_pssm_dict_h5,
